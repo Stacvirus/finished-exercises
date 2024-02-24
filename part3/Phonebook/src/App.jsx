@@ -16,7 +16,10 @@ const App = () => {
 
   useEffect(() => {
     serverServices.getData()
-      .then(res => setPersons(res))
+      .then(res => {
+        console.log(res)
+        setPersons(res)
+      })
   }, [])
 
   function isExist(person) {
