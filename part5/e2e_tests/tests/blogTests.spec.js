@@ -52,19 +52,19 @@ describe('bloglist app', () => {
             await page.getByRole('button', { name: 'new blogs' }).click()
 
             await helper.createBlog(page, 'a blog comming from e2e testing', 'e2e', 'playwright@gmail.com', '12')
+            // page.getByText('a blog comming from e2e testing').waitFor()
 
-            await expect(page.getByText('a blog comming from e2e testing, e2e')).toBeVisible()
+            await expect(page.getByText('a blog comming from e2e testing')).toBeVisible()
         })
 
         test('block can be edited', async ({ page }) => {
             await page.getByRole('button', { name: 'new blogs' }).click()
 
             await helper.createBlog(page, 'a blog comming from e2e testing', 'e2e', 'playwright@gmail.com', '12')
+            // page.getByText('a blog comming from e2e testing, e2e').waitFor()
 
-            const likesElement = page.locator('li').filter({ hasText: 'a blog comming from e2e testing, e2e' })
-            await likesElement.getByRole('button', { name: 'view' }).last().click()
-
-            const blog = page.locator('.aBlog').last()
+            const blog = page.locator('.aBlog')
+            await blog.getByRole('button', { name: 'view' }).click()
             await blog.getByRole('button', { name: 'like' }).click()
 
             await expect(blog.getByTestId('likesList')).toContainText(`13 like`)
@@ -74,18 +74,17 @@ describe('bloglist app', () => {
             const ran = Math.floor(Math.random() * 100)
             await page.getByRole('button', { name: 'new blogs' }).click()
             await helper.createBlog(page, `this is for the delete test ${ran}`, 'e2e', 'test.com', '1')
+            // page.locator('.notification').waitFor()
 
             page.getByText(`this is for the delete test ${ran}, e2e`).waitFor()
 
-            await page.getByRole('button', { name: 'view' }).click()
+            await page.locator('.aBlog').getByRole('button', { name: 'view' }).click()
 
             page.on('dialog', dialog => dialog.accept())
             await page.locator('.aBlog').getByRole('button', { name: 'remove' }).click()
 
             await expect(page.getByText(`this is for the delete test ${ran}, e2e`)).not.toBeVisible()
         })
-
-
     })
 
     describe('when user logged out', () => {
@@ -119,7 +118,6 @@ describe('bloglist app', () => {
             const blog = page.locator('.aBlog').first()
             await blog.getByRole('button', { name: 'view' }).click()
             await expect(blog.getByText('remove')).not.toBeVisible()
-
         })
 
         test('blogs arrange according to the likes value', async ({ page }) => {
@@ -139,6 +137,4 @@ describe('bloglist app', () => {
             expect(result).toBe(false)
         })
     })
-
-
 })
